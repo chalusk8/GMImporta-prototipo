@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>GMImporta — GM Transport ERP</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="erp-shell">
+    <aside class="erp-sidebar" aria-label="Menú GM Transport">
+      <div class="erp-logo">
+        <span class="logo-gm">gm</span><span class="logo-rest">Transport Software</span>
+      </div>
+      <div class="erp-search">
+        <input type="search" placeholder="Buscar" readonly tabindex="-1" />
+      </div>
+      <nav class="erp-nav">
+        <a href="#">Indicadores</a>
+        <div class="nav-group open" data-group="configuracion">
+          <button type="button" class="nav-parent active" id="btnConfiguracion" aria-expanded="true">
+            <span>Configuración</span>
+            <span class="nav-chevron" aria-hidden="true">▾</span>
+          </button>
+          <div class="nav-children" id="menuConfiguracion">
+            <a href="#" class="sub active-sub" id="linkGMImporta">GMImporta</a>
+          </div>
+        </div>
+        <a href="#">Facturación</a>
+        <a href="#">Cobranza</a>
+        <a href="#">Tráfico</a>
+        <a href="#">Banco</a>
+        <a href="#">Cuentas Por Pagar</a>
+        <a href="#">Contabilidad</a>
+        <a href="#">Fiscal</a>
+      </nav>
+      <p class="erp-side-note">Prototipo visual · sin BD</p>
+    </aside>
+
+    <div class="erp-main">
+      <header class="erp-top">
+        <div class="erp-top-left">
+          <span class="empresa">XOCHILT CASAS CHAVEZ</span>
+          <span class="rfc">RFC: CACX7605101P8</span>
+        </div>
+        <div class="erp-top-right">
+          <span class="badge-sim">Solo frontend simulado</span>
+        </div>
+      </header>
+
+      <div class="app">
+        <div class="panel-window">
+          <div class="panel-titlebar">
+            <h1>GMImporta — Importación de CFDI externos</h1>
+          </div>
+
+          <div class="panel-body">
+            <section class="indicadores" id="indicadores">
+              <article><span>XML encontrados</span><strong id="indXml">0</strong></article>
+              <article><span>Ingresos</span><strong id="indIngresos">0</strong></article>
+              <article><span>Egresos</span><strong id="indEgresos">0</strong></article>
+              <article><span>Importados</span><strong id="indImportados">0</strong></article>
+              <article><span>Pendientes</span><strong id="indPendientes">0</strong></article>
+              <article><span>Errores</span><strong id="indErrores">0</strong></article>
+            </section>
+
+            <section class="toolbar">
+              <div class="acciones">
+                <button type="button" class="btn btn-primary" id="btnCargar">Cargar documentos</button>
+                <button type="button" class="btn btn-secondary" id="btnDemo">Cargar demo</button>
+                <button type="button" class="btn btn-primary" id="btnImportar" disabled>Importar</button>
+                <button type="button" class="btn btn-ghost" id="btnLimpiar" disabled>Limpiar</button>
+              </div>
+              <div class="carpeta-line">
+                <span>Documentos:</span>
+                <strong id="lblDocumentos">Ninguno cargado</strong>
+              </div>
+              <div class="progreso-wrap">
+                <div class="progreso" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                  <div id="barraProgreso"></div>
+                </div>
+                <span id="lblProgreso">Listo</span>
+              </div>
+            </section>
+
+            <section class="filtros">
+              <label>
+                Tipo
+                <select id="filtroTipo">
+                  <option value="todos">Todos</option>
+                  <option value="I">Ingresos</option>
+                  <option value="E">Egresos</option>
+                </select>
+              </label>
+              <label>
+                RFC Emisor
+                <input id="filtroRfcEmisor" type="text" placeholder="RFC emisor" />
+              </label>
+              <label>
+                RFC Receptor
+                <input id="filtroRfcReceptor" type="text" placeholder="RFC receptor" />
+              </label>
+              <label>
+                Desde
+                <input id="filtroFechaIni" type="date" />
+              </label>
+              <label>
+                Hasta
+                <input id="filtroFechaFin" type="date" />
+              </label>
+              <label>
+                UUID
+                <input id="filtroUuid" type="text" placeholder="UUID timbrado" />
+              </label>
+              <button type="button" class="btn btn-primary" id="btnBuscar">Buscar</button>
+            </section>
+
+            <section class="resumen-rapido">
+              <span>Total XML: <strong id="totXml">0</strong></span>
+              <span>Ingresos: <strong id="totIngresos">0</strong></span>
+              <span>Egresos: <strong id="totEgresos">0</strong></span>
+              <span>Seleccionados: <strong id="totSeleccionados">0</strong></span>
+            </section>
+
+            <main class="contenido">
+              <div class="tabla-panel">
+                <div class="tabla-caption">Listado de CFDI a importar</div>
+                <div class="tabla-scroll">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th class="col-check"><input type="checkbox" id="chkTodos" title="Seleccionar visibles" /></th>
+                        <th>Tipo</th>
+                        <th>RFC Emisor</th>
+                        <th>Nombre Emisor</th>
+                        <th>RFC Receptor</th>
+                        <th>Documento</th>
+                        <th>Fecha</th>
+                        <th>Moneda</th>
+                        <th class="num">Total</th>
+                        <th>UUID</th>
+                        <th>Concepto</th>
+                        <th>Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tbodyFacturas"></tbody>
+                  </table>
+                  <div id="emptyState" class="empty">
+                    Usa <strong>Cargar documentos</strong> o <strong>Cargar demo</strong> para poblar el listado.
+                  </div>
+                </div>
+              </div>
+
+              <aside class="detalle" id="panelDetalle">
+                <h2>Información general</h2>
+                <p class="detalle-hint" id="detalleHint">Selecciona una factura en la tabla.</p>
+                <dl id="detalleLista" class="oculto">
+                  <div><dt>RFC Emisor</dt><dd id="dRfcEmisor">—</dd></div>
+                  <div><dt>RFC Receptor</dt><dd id="dRfcReceptor">—</dd></div>
+                  <div><dt>Nombre Emisor</dt><dd id="dNombreEmisor">—</dd></div>
+                  <div><dt>Fecha</dt><dd id="dFecha">—</dd></div>
+                  <div><dt>UUID</dt><dd id="dUuid">—</dd></div>
+                  <div><dt>Concepto</dt><dd id="dConcepto">—</dd></div>
+                  <div><dt>Total</dt><dd id="dTotal">—</dd></div>
+                  <div><dt>Tipo</dt><dd id="dTipo">—</dd></div>
+                  <div><dt>Moneda</dt><dd id="dMoneda">—</dd></div>
+                  <div><dt>Estado</dt><dd id="dEstado">—</dd></div>
+                </dl>
+              </aside>
+            </main>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <input type="file" id="inputDocumentos" accept=".xml,text/xml,application/xml" multiple hidden />
+  <script src="app.js"></script>
+</body>
+</html>
